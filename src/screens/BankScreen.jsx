@@ -13,11 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { db, auth, storage } from "../config/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import {
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-} from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import * as ImagePicker from "expo-image-picker";
 
 export default function BankScreen({ navigation }) {
@@ -61,7 +57,9 @@ export default function BankScreen({ navigation }) {
       const userSnap = await getDoc(userDoc);
 
       if (!userSnap.exists()) {
-        console.warn("Documento do usuário não encontrado no Firestore. Criando documento padrão...");
+        console.warn(
+          "Documento do usuário não encontrado no Firestore. Criando documento padrão..."
+        );
         await setDoc(userDoc, {
           nome: auth.currentUser.displayName || "Usuário",
           email: auth.currentUser.email || "",
@@ -73,7 +71,8 @@ export default function BankScreen({ navigation }) {
       } else {
         const data = userSnap.data();
         setUserName(data.nome || "Usuário");
-        const imageUrl = data.profileImageUrl || "https://via.placeholder.com/50";
+        const imageUrl =
+          data.profileImageUrl || "https://via.placeholder.com/50";
         setProfileImageUrl(imageUrl);
         console.log("Imagem de perfil carregada:", imageUrl); // Para debug
       }
@@ -103,7 +102,10 @@ export default function BankScreen({ navigation }) {
       setProfileImageUrl(newProfileImage);
 
       try {
-        const storageRef = ref(storage, `profileImages/${auth.currentUser.uid}`);
+        const storageRef = ref(
+          storage,
+          `profileImages/${auth.currentUser.uid}`
+        );
         const response = await fetch(newProfileImage);
         const blob = await response.blob();
         const uploadTask = uploadBytesResumable(storageRef, blob);
@@ -142,15 +144,16 @@ export default function BankScreen({ navigation }) {
   const renderTransactionItem = ({ item }) => {
     const isBoxTransaction = item.source === "caixa";
     const isAddTransaction = item.type === "add";
-    
+
     const amountColor = isBoxTransaction
       ? "#800080" // Roxo para transações de caixinha
       : isAddTransaction
       ? "#388e3c" // Verde para adições
       : "#d32f2f"; // Vermelho para transferências
-  
+
     const sign = isAddTransaction ? "+" : "-";
-  
+
+    console.log(item);
     return (
       <View style={styles.transactionContainer}>
         <View style={styles.transactionRow}>
@@ -163,20 +166,18 @@ export default function BankScreen({ navigation }) {
           </Text>
         </View>
         {item.description && (
-          <Text style={styles.transactionDescription}>
-            {item.description}
-          </Text>
+          <Text style={styles.transactionDescription}>{item.description}</Text>
         )}
       </View>
     );
   };
-  
+
   return (
     <Surface style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.welcomeText}>Bem vindo</Text>
+            <Text style={styles.welcomeText}>Bem-vindo(a)</Text>
             <Text style={styles.userName}>{userName}</Text>
           </View>
           <TouchableOpacity onPress={pickImage}>
@@ -195,7 +196,8 @@ export default function BankScreen({ navigation }) {
         <View style={styles.actionContainer}>
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => { navigation.navigate("RecberDinheiroScreen")
+            onPress={() => {
+              navigation.navigate("RecberDinheiroScreen");
               const valorAdicionado = 50.0; // Exemplo de valor
               const descricao = "Dinheiro extra"; // Exemplo de descrição
               addMoneyToBank(valorAdicionado, descricao);
@@ -209,14 +211,22 @@ export default function BankScreen({ navigation }) {
             style={styles.actionButton}
             onPress={() => navigation.navigate("CaixaScreen")}
           >
-            <MaterialCommunityIcons name="cash-multiple" size={28} color="#fff" />
+            <MaterialCommunityIcons
+              name="cash-multiple"
+              size={28}
+              color="#fff"
+            />
             <Text style={styles.actionLabel}>Caixinhas</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => navigation.navigate("TransferirScreen")}
           >
-            <MaterialCommunityIcons name="arrow-right-bold" size={28} color="#fff" />
+            <MaterialCommunityIcons
+              name="arrow-right-bold"
+              size={28}
+              color="#fff"
+            />
             <Text style={styles.actionLabel}>Transferência</Text>
           </TouchableOpacity>
         </View>
@@ -287,7 +297,12 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   balanceLabel: { fontSize: 16, color: "#a767c6" },
-  balance: { fontSize: 32, fontWeight: "bold", color: "#a767c6", marginTop: 10 },
+  balance: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#a767c6",
+    marginTop: 10,
+  },
   actionContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -321,7 +336,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#333333",
     marginBottom: 10,
-  }, transactionsContainer: { marginTop: 20 },
+  },
+  transactionsContainer: { marginTop: 20 },
   transactionContainer: {
     backgroundColor: "#F8F8F8",
     padding: 10,
@@ -361,6 +377,4 @@ const styles = StyleSheet.create({
     flex: 1,
     marginHorizontal: 5,
   },
-
 });
-

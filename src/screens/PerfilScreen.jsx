@@ -38,23 +38,15 @@ const PerfilScreen = () => {
         try {
           const currentUser = auth.currentUser;
           if (currentUser) {
-            setUsername(currentUser.displayName || "Nome de usuário");
-            setEmail(currentUser.email || "Email não disponível");
-          }
-
-          const savedImage = await AsyncStorage.getItem("profileImage");
-          if (savedImage) {
-            setProfileImage(savedImage);
-          }
-
-          const savedPhotos = await AsyncStorage.getItem("recentPhotos");
-          if (savedPhotos) {
-            setRecentPhotos(JSON.parse(savedPhotos));
-          }
-
-          const savedAboutText = await AsyncStorage.getItem("aboutText");
-          if (savedAboutText) {
-            setAboutText(savedAboutText);
+            const docRef = doc(db, "usuarios", currentUser.uid);
+            const docSnap = await getDoc(docRef);
+  
+            if (docSnap.exists()) {
+              const userData = docSnap.data();
+              setUsername(userData.nome || "Nome de usuário");
+              setEmail(userData.email || "Email não disponível");
+              setProfileImage(userData.profileImage || null); // Carrega a imagem do Firestore
+            }
           }
         } catch (error) {
           console.error("Erro ao carregar dados do usuário:", error);
@@ -63,7 +55,7 @@ const PerfilScreen = () => {
       loadUserData();
     }, [])
   );
-
+  
   const saveAboutText = async () => {
     try {
       await AsyncStorage.setItem("aboutText", aboutText);

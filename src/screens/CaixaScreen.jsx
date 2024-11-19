@@ -13,11 +13,11 @@ export default function CaixaScreen({ navigation }) {
       try {
         const storedBoxes = await AsyncStorage.getItem('boxes');
         const parsedBoxes = storedBoxes ? JSON.parse(storedBoxes) : [];
-        setBoxes(parsedBoxes); // Atualiza as caixinhas
+        setBoxes(parsedBoxes);
       } catch (error) {
         console.error('Erro ao carregar caixinhas:', error);
       } finally {
-        setLoading(false); // Termina o carregamento
+        setLoading(false);
       }
     };
 
@@ -26,10 +26,8 @@ export default function CaixaScreen({ navigation }) {
 
   // Função para adicionar uma nova caixinha
   const addBox = async (newBox) => {
-    const updatedBoxes = [...boxes, newBox]; // Adiciona a nova caixinha no final da lista
-    setBoxes(updatedBoxes); // Atualiza a lista no estado
-
-    // Salva as caixinhas atualizadas no AsyncStorage
+    const updatedBoxes = [...boxes, newBox];
+    setBoxes(updatedBoxes);
     try {
       await AsyncStorage.setItem('boxes', JSON.stringify(updatedBoxes));
     } catch (error) {
@@ -42,9 +40,7 @@ export default function CaixaScreen({ navigation }) {
     const updatedBoxes = boxes.map((box) =>
       box.id === updatedBox.id ? updatedBox : box
     );
-    setBoxes(updatedBoxes); // Atualiza o estado com as caixinhas modificadas
-
-    // Salva as caixinhas atualizadas no AsyncStorage
+    setBoxes(updatedBoxes);
     try {
       await AsyncStorage.setItem('boxes', JSON.stringify(updatedBoxes));
     } catch (error) {
@@ -54,7 +50,35 @@ export default function CaixaScreen({ navigation }) {
 
   // Função para navegar até a tela de detalhes da caixinha
   const handleBoxPress = (box) => {
-    setSelectedBox(box); // Define a caixinha selecionada
+    setSelectedBox(box);
+  };
+
+  // Função para formatar o saldo
+  const formatBalance = (balance) => {
+    if (balance === undefined || balance === null) {
+      return '0.00';
+    }
+    return balance.toFixed(2);
+  };
+
+  // Renderização condicional da caixinha selecionada
+  const renderSelectedBox = () => {
+    if (!selectedBox) return null;
+    return (
+      <View style={styles.selectedBoxDetails}>
+        <Text style={styles.selectedBoxText}>
+          Saldo da Caixinha: R$ {formatBalance(selectedBox.balance)}
+        </Text>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('CaixaDetailsScreen', { box: selectedBox, editBox })
+          }
+          style={styles.modifyButton}
+        >
+          <Text style={styles.modifyButtonText}>Modificar Caixinha</Text>
+        </TouchableOpacity>
+      </View>
+    );
   };
 
   // Função para renderizar cada item da lista de caixinhas
@@ -64,31 +88,24 @@ export default function CaixaScreen({ navigation }) {
     </TouchableOpacity>
   );
 
-  // Função para formatar o saldo
-  // Função para formatar o saldo
-const formatBalance = (balance) => {
-  // Se o saldo for undefined ou null, retorna 0
-  if (balance === undefined || balance === null) {
-    return "0.00";
-  }
-  return balance.toFixed(2); // Exibe o saldo com duas casas decimais
-};
-
-// Exibir os detalhes da caixinha selecionada
-{selectedBox && (
-  <View style={styles.selectedBoxDetails}>
-    <Text style={styles.selectedBoxText}>
-      Saldo da Caixinha: R$ {formatBalance(selectedBox.balance)}
-    </Text>
-    <TouchableOpacity
-      onPress={() => navigation.navigate('CaixaDetailsScreen', { box: selectedBox, editBox })}
-      style={styles.modifyButton}
-    >
-      <Text style={styles.modifyButtonText}>Modificar Caixinha</Text>
-    </TouchableOpacity>
-  </View>
-)}
-
+  return (
+    <View style={styles.container}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#a445bd" />
+      ) : boxes.length > 0 ? (
+        <FlatList
+          data={boxes}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.gridContainer}
+        />
+      ) : (
+        <Text style={styles.noBoxesText}>Nenhuma caixinha encontrada.</Text>
+      )}
+      {renderSelectedBox()}
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -98,13 +115,13 @@ const styles = StyleSheet.create({
   },
   boxButton: {
     backgroundColor: '#a445bd',
-    padding: 30, // Espaçamento maior para dar o efeito de quadrado
+    padding: 30,
     borderRadius: 8,
     marginBottom: 15,
-    marginHorizontal: 10, // Espaçamento entre os itens
+    marginHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1, // Faz com que as caixinhas ocupem a mesma largura
+    flex: 1,
   },
   boxText: {
     color: '#fff',
@@ -112,28 +129,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
-  createBoxButton: {
-    backgroundColor: '#a445bd',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  createBoxText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   noBoxesText: {
     color: '#888',
     fontSize: 16,
     textAlign: 'center',
     marginTop: 20,
-  },
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap', // Permite que os itens 'quebrem' para a linha seguinte
-    justifyContent: 'space-between', // Espaço igual entre os itens
   },
   selectedBoxDetails: {
     marginTop: 20,
@@ -159,4 +159,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-})};
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+});

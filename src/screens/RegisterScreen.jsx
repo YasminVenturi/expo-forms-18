@@ -152,7 +152,7 @@ export default function RegisterScreen({ navigation }) {
               style={styles.linkText}
               onPress={() => navigation.navigate("TermsScreen")}
             >
-             Termos e Serviços
+             Termos de Uso
             </Text>
           </Text>
         </View>
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 15,
     fontSize: 16,
-    color: "#555",
+    color: "#767676",
   },
   socialContainer: {
     flexDirection: "row",

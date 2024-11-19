@@ -42,7 +42,7 @@ export default function WelcomeScreen({ navigation }) {
     Cadastrar
    </Button>
    <TouchableOpacity onPress={() => navigation.navigate("LoginScreen")}>
-    <Text style={styles.linkButton}>Já tem conta? Log In</Text>
+    <Text style={styles.linkButton}>Já tem conta? Logue-se</Text>
    </TouchableOpacity>
   </View>
  );
