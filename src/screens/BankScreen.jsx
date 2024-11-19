@@ -143,7 +143,7 @@ export default function BankScreen({ navigation }) {
   // Função para renderizar as transações
   const renderTransactionItem = ({ item }) => {
     const isBoxTransaction = item.source === "caixa";
-    const isAddTransaction = item.type === "add";
+    const isAddTransaction = item.type === "add" || item.type === "deposit";
 
     const amountColor = isBoxTransaction
       ? "#800080" // Roxo para transações de caixinha
@@ -330,14 +330,6 @@ const styles = StyleSheet.create({
     color: "#333333",
     marginBottom: 10,
   },
-  transactionsContainer: { marginTop: 20 },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#333333",
-    marginBottom: 10,
-  },
-  transactionsContainer: { marginTop: 20 },
   transactionContainer: {
     backgroundColor: "#F8F8F8",
     padding: 10,

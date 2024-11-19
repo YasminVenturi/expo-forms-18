@@ -86,21 +86,25 @@ export default function HomeScreen({ navigation }) {
                 {/* Exibindo uma descrição resumida do evento */}
                 <Text style={styles.eventDescription}>{event.description.substring(0, 100)}...</Text>
               </Card.Content>
-              <Card.Actions>
-                <Button
-                  onPress={() => handleEventPress(event)}
-                  mode="text"
-                  labelStyle={{ color: '#a547bf' }}
-                >
-                  Ver Detalhes
-                </Button>
-                <Button
-                  onPress={() => handleDeleteEvent(event.id)}
-                  mode="text"
-                  labelStyle={{ color: '#d9534f' }}
-                >
-                  Excluir
-                </Button>
+              <Card.Actions style={styles.cardActions}>
+              <Button
+                onPress={() => handleEventPress(event)}
+                mode="contained"
+                contentStyle={styles.actionButtonContent}
+                labelStyle={styles.actionButtonText}
+                style={styles.actionButton}
+              >
+                Ver Detalhes
+              </Button>
+              <Button
+                onPress={() => handleDeleteEvent(event.id)}
+                mode="contained"
+                contentStyle={styles.deleteButtonContent}
+                labelStyle={styles.actionButtonText}
+                style={styles.deleteButton}
+              >
+                Excluir
+              </Button>
               </Card.Actions>
             </Card>
           ))
@@ -211,5 +215,39 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     flex: 1,
     marginHorizontal: 5,
+  },
+  cardActions: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingTop: 8,
+  },
+  
+  actionButton: {
+    backgroundColor: '#a547bf',
+    borderRadius: 20,
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  
+  deleteButton: {
+    backgroundColor: '#d9534f',
+    borderRadius: 20,
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  
+  actionButtonContent: {
+    height: 40,
+  },
+  
+  deleteButtonContent: {
+    height: 40,
+  },
+  
+  actionButtonText: {
+    fontSize: 14,
+    color: '#ffffff',
+    textTransform: 'uppercase',
+    fontWeight: 'bold',
   },
 });
